@@ -13,9 +13,9 @@ public class MainGui extends GUI{
     }
     protected void setupGUI(JFrame frame){
         frame.getContentPane().setBackground(Color.blue);
-        JLabel label = new JLabel("Welcome to Nestor's Password Manager!", SwingConstants.CENTER);
-        label.setSize(frame.getWidth(), frame.getHeight() / 10);
-        label.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        JLabel label = createJLabel("Welcome to Nestor's Password Manager!",
+                SwingConstants.CENTER, new Font("TimesRoman", Font.BOLD, 25), Color.WHITE,
+                frame.getHeight() / 10, frame.getWidth());
         frame.add(BorderLayout.NORTH, label);
         String name = "ADD PASSWORD";
         ActionListener listener = new ActionListener() {
@@ -26,6 +26,7 @@ public class MainGui extends GUI{
                 frame.setVisible(true);
             }
         };
+
         Dimension dim = new Dimension(100,100);
         JButton addpassword = createJButton(name,listener,dim);
         frame.add(addpassword);
@@ -38,6 +39,7 @@ public class MainGui extends GUI{
                 frame.setVisible(true);
             }
         };
+        frame.add(createJLabel("", SwingConstants.CENTER, null,Color.BLACK,frame.getHeight() / 10, frame.getWidth()));
         JButton getpassword = createJButton(name, listener, dim);
         frame.add(getpassword);
         frame.setLayout(new GridLayout(5,7));
@@ -48,5 +50,12 @@ public class MainGui extends GUI{
         button.setSize(dim);
         button.addActionListener(listener);
         return button;
+    }
+    private JLabel createJLabel(String txt,int placement, Font font, Color color, int height, int width){
+        JLabel label = new JLabel(txt,placement);
+        label.setSize(height, width);
+        label.setFont(font);
+        label.setForeground(color);
+        return label;
     }
 }
