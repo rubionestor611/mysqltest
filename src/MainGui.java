@@ -21,41 +21,23 @@ public class MainGui extends GUI{
         ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.setVisible(false);
                 SetGui setGUI = new SetGui();
-                frame.setVisible(true);
             }
         };
 
         Dimension dim = new Dimension(100,100);
         JButton addpassword = createJButton(name,listener,dim);
         frame.add(addpassword);
-        name = "Get Password";
+        name = "GET PASSWORD";
         listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.setVisible(false);
-                GetGui getgui = new GetGui();
-                frame.setVisible(true);
+                GetGui getgui = new GetGui(frame.getSize());
             }
         };
         frame.add(createJLabel("", SwingConstants.CENTER, null,Color.BLACK,frame.getHeight() / 10, frame.getWidth()));
         JButton getpassword = createJButton(name, listener, dim);
         frame.add(getpassword);
         frame.setLayout(new GridLayout(5,7));
-    }
-
-    private JButton createJButton(String name, ActionListener listener, Dimension dim){
-        JButton button = new JButton(name);
-        button.setSize(dim);
-        button.addActionListener(listener);
-        return button;
-    }
-    private JLabel createJLabel(String txt,int placement, Font font, Color color, int height, int width){
-        JLabel label = new JLabel(txt,placement);
-        label.setSize(height, width);
-        label.setFont(font);
-        label.setForeground(color);
-        return label;
     }
 }
