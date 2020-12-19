@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class SetGui extends JFrame{
     private JLabel title;
@@ -64,18 +67,6 @@ public class SetGui extends JFrame{
         passwordfield.setLocation(password.getX() + 150, password.getY());
         c.add(passwordfield);
 
-        submit = new JButton("Submit");
-        submit.setFont(new Font("Arial", Font.PLAIN, 15));
-        submit.setSize(100,20);
-        submit.setLocation(password.getX(), password.getY() + 60);
-        c.add(submit);
-
-        clear = new JButton("Clear");
-        clear.setFont(new Font("Arial", Font.PLAIN, 15));
-        clear.setSize(100,20);
-        clear.setLocation(passwordfield.getX(), submit.getY());
-        c.add(clear);
-
         results = new JTextArea();
         results.setFont(new Font("Arial", Font.PLAIN, 15));
         results.setSize(200,400);
@@ -83,6 +74,87 @@ public class SetGui extends JFrame{
         results.setEditable(false);
         results.setLineWrap(true);
         c.add(results);
+
+        submit = new JButton("Submit");
+        submit.setFont(new Font("Arial", Font.PLAIN, 15));
+        submit.setSize(100,20);
+        submit.setLocation(password.getX(), password.getY() + 60);
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                results.setText(trytoSubmit(sitefield.getText(), usernamefield.getText(), passwordfield.getText()));
+            }
+        });
+        c.add(submit);
+
+        clear = new JButton("Clear");
+        clear.setFont(new Font("Arial", Font.PLAIN, 15));
+        clear.setSize(100,20);
+        clear.setLocation(passwordfield.getX(), submit.getY());
+        clear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearAllText(usernamefield, sitefield, passwordfield, results);
+            }
+        });
+        c.add(clear);
+
+    }
+
+    private String trytoSubmit(String site, String user, String pass) {
+        String ret = "";
+        try{
+            Connection con = getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT * FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
+            rs.
+            if(!rs.next()){
+                String query = "INSERT INTO password VALUES (?,?,?)";
+                PreparedStatement preparedstmt = con.prepareStatement(query);
+
+                preparedstmt.setString(1,site);
+                preparedstmt.setString(2,user);
+                preparedstmt.setString(3,pass);
+
+                preparedstmt.execute();
+            }else{
+                ret = "A password for " + user + " on " + site + " already exists";
+            }
+            ret = "Password Added!\n";
+            ret += "-site: " + site + "\n";
+            ret += "-username: " + user + "\n";
+            ret += "-password: " + pass + "\n";
+            rs.close();
+            st.close();
+            con.close();
+        }catch(Exception e){
+            e.printStackTrace();
+            ret = "Error adding " + pass + " as " + user + "'s password on " + site + ".";
+        }
+        return ret;
+    }
+
+    private void clearAllText(JTextField user, JTextField site, JTextField pass, JTextArea res) {
+        user.setText("");
+        site.setText("");
+        pass.setText("");
+        res.setText("");
+    }
+    private static Connection getConnection(){
+        try{
+            String driver = "com.mysql.cj.jdbc.Driver";
+            String url = "jdbc:mysql://localhost:3305/passwords";
+            String username = "root";
+            String password = "Golazohiguain9";
+            Class.forName(driver);
+
+            Connection con = DriverManager.getConnection(url,username,password);
+            System.out.println("Connected");
+            return con;
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return null;
     }
 
 }
