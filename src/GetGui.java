@@ -15,6 +15,7 @@ public class GetGui extends GUI{
 
     @Override
     protected void setupGUI(JFrame frame) {
+        frame.setTitle("Password Manager");
         frame.getContentPane().setBackground(Color.BLACK);
         JLabel title = createJLabel("Get Password Form", SwingConstants.CENTER,
                 new Font("TimesRoman", Font.BOLD, 25),
@@ -49,8 +50,9 @@ public class GetGui extends GUI{
         constraints.gridy = 4;
         constraints.gridwidth = 4;
         pane.add(passwordfield, constraints);
+
         JButton search = new JButton("Get Password");
-        constraints.gridx = 4;
+        constraints.gridx = 3;
         constraints.gridy = 1;
         search.addActionListener(new ActionListener() {
             @Override
@@ -67,14 +69,20 @@ public class GetGui extends GUI{
         constraints.gridx = 1;
         constraints.gridy = 0;
         pane.add(filler, constraints);
+
         JLabel filler2 = new JLabel("   ");
         constraints.gridy = 2;
         pane.add(filler2, constraints);
+
         JLabel filler3 = new JLabel("   ");
         constraints.gridx = 3;
         constraints.gridy = 1;
         pane.add(filler3, constraints);
 
+        JLabel filler4 = new JLabel("   ");
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        pane.add(filler4,constraints);
 
         frame.add(pane);
 
@@ -85,8 +93,17 @@ public class GetGui extends GUI{
         try {
             Statement st = con.createStatement();
             ResultSet resultSet = st.executeQuery(query);
-            return resultSet.getString("password");
+            String result = "";
+            if(resultSet.next()){
+                System.out.println("results found");
+                result = resultSet.getString("password");
+            }else{
+                result = "none found";
+            }
+            st.close();
+            return result;
         } catch (SQLException throwables) {
+            throwables.printStackTrace();
             return "Error searching for password";
         }
     }
@@ -96,21 +113,22 @@ public class GetGui extends GUI{
             JOptionPane.showMessageDialog(null, "Error retrieving info with two blank values");
             return null;
         }
-        String query = "SELECT PASSWORD FROM passwords WHERE ";
+        String query = "SELECT PASSWORD FROM password WHERE ";
         if(!site.isBlank() && !user.isBlank()){
-            query += "site = '" + site + "' AND username = '" + user + "';";
+            query += "site_name = '" + site + "' AND username = '" + user + "';";
         }else if(site.isBlank()){
             query += "name = '" + user + "';";
         }else{//name is blank
-            query += "site = '" + site + "';";
+            query += "site_name = '" + site + "';";
         }
+        System.out.println(query);
         return query;
     }
 
     private static Connection getConnection(){
         try{
             String driver = "com.mysql.cj.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:3305/giraffe";
+            String url = "jdbc:mysql://localhost:3305/passwords";
             String username = "root";
             String password = "Golazohiguain9";
             Class.forName(driver);

@@ -21,7 +21,8 @@ public class MainGui extends GUI{
         ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SetGui setGUI = new SetGui();
+                SetGui setGUI = new SetGui(frame.getSize());
+                setGUI.setVisible(true);
             }
         };
 
