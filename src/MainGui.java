@@ -8,7 +8,7 @@ public class MainGui extends GUI{
         this.frame = new JFrame(this.guiname);
         this.frame.setSize(this.WindowSize);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setupGUI(this.frame);
+        this.setupGUI2(this.frame);
         this.frame.setVisible(true);
     }
     protected void setupGUI(JFrame frame){
@@ -39,6 +39,16 @@ public class MainGui extends GUI{
         frame.add(createJLabel("", SwingConstants.CENTER, null,Color.BLACK,frame.getHeight() / 10, frame.getWidth()));
         JButton getpassword = createJButton(name, listener, dim);
         frame.add(getpassword);
+
         frame.setLayout(new GridLayout(5,7));
+    }
+    private void setupGUI2(JFrame frame){
+        JPanel pane = new JPanel();
+        pane.setBackground(Color.blue);
+        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        JLabel title = createJLabel("Welcome to Nestor's Password Manager!",SwingConstants.CENTER,
+                new Font("Arial", Font.BOLD, 25), Color.WHITE,frame.getHeight() / 10, frame.getWidth());
+        pane.add(title);
+        
     }
 }

@@ -69,10 +69,11 @@ public class SetGui extends JFrame{
 
         results = new JTextArea();
         results.setFont(new Font("Arial", Font.PLAIN, 15));
-        results.setSize(200,400);
-        results.setLocation((int) Math.round(this.getWidth() * 0.7), site.getY());
+        results.setSize(350,400);
+        results.setLocation((int) Math.round(this.getWidth() * 0.6), site.getY());
         results.setEditable(false);
         results.setLineWrap(true);
+        results.setWrapStyleWord(true);
         c.add(results);
 
         submit = new JButton("Submit");
@@ -106,9 +107,9 @@ public class SetGui extends JFrame{
         try{
             Connection con = getConnection();
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
-            rs.
-            if(!rs.next()){
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) AS count FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
+            rs.next();
+            if(rs.getInt("count") == 0){
                 String query = "INSERT INTO password VALUES (?,?,?)";
                 PreparedStatement preparedstmt = con.prepareStatement(query);
 
@@ -117,16 +118,17 @@ public class SetGui extends JFrame{
                 preparedstmt.setString(3,pass);
 
                 preparedstmt.execute();
+                ret = "Password Added!\n";
+                ret += "-site: " + site + "\n";
+                ret += "-username: " + user + "\n";
+                ret += "-password: " + pass + "\n";
+                rs.close();
+                st.close();
+                con.close();
             }else{
                 ret = "A password for " + user + " on " + site + " already exists";
             }
-            ret = "Password Added!\n";
-            ret += "-site: " + site + "\n";
-            ret += "-username: " + user + "\n";
-            ret += "-password: " + pass + "\n";
-            rs.close();
-            st.close();
-            con.close();
+
         }catch(Exception e){
             e.printStackTrace();
             ret = "Error adding " + pass + " as " + user + "'s password on " + site + ".";
