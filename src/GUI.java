@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 
-public abstract class GUI {
+public abstract class GUI{
     protected JFrame frame = new JFrame();
     protected Dimension WindowSize  = new Dimension(1000, 1000);
     protected String guiname = "Password Manager";
