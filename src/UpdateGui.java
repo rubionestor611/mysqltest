@@ -16,7 +16,6 @@ public class UpdateGui extends JFrame{
     private JButton clear;
     private JButton cancel;
     private int confirmchange;
-    private JDialog results;
     private GridBagConstraints constraints;
 
     public UpdateGui(Dimension size){
@@ -87,7 +86,11 @@ public class UpdateGui extends JFrame{
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tryUpdate(sitefield.getText(), usernamefield.getText(), passwordfield.getText());
+                if(!sitefield.getText().strip().equals("") && !usernamefield.getText().strip().equals("") && !passwordfield.getText().strip().equals("")){
+                    tryUpdate(sitefield.getText(), usernamefield.getText(), passwordfield.getText());
+                }else{
+                    JOptionPane.showMessageDialog(null, "Empty values cannot be used in update", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         buttonPane.add(update, constraints);
