@@ -75,6 +75,12 @@ public class MainGui extends GUI{
 
         JButton remove_password = new JButton("Remove Password");
         remove_password.setSize(update_password.getWidth(),50);
+        remove_password.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RemoveGUI removeGUI = new RemoveGUI(frame.getSize());
+            }
+        });
 
         Container c = frame.getContentPane();
         c.setLayout(null);
