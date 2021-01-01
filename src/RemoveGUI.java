@@ -3,8 +3,14 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class RemoveGUI extends JFrame {
     private Container c;
@@ -48,7 +54,92 @@ public class RemoveGUI extends JFrame {
 
         setupPasswordField();
 
+        setupButtons();
+
         this.setVisible(true);
+    }
+
+    private void setupButtons() {
+        remove = new JButton("Remove");
+        remove.setLocation(sitefield.getX() + sitefield.getWidth() + 30, sitefield.getY());
+        remove.setSize(sitefield.getWidth() / 4, sitefield.getHeight());
+        remove.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                trytoRemovePasswordfromMySQL();
+            }
+        });
+        c.add(remove);
+
+        clear = new JButton("Clear");
+        clear.setLocation(remove.getX(), usernamefield.getY());
+        clear.setSize(remove.getSize());
+        clear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                c.remove(usernamefield);
+                c.remove(sitefield);
+                c.remove(passwordfield);
+                setupSitefield();
+                setupUsernameField();
+                setupPasswordField();
+            }
+        });
+        c.add(clear);
+
+        cancel = new JButton("Cancel");
+        cancel.setLocation(clear.getX(), passwordfield.getY());
+        cancel.setSize(clear.getSize());
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+        c.add(cancel);
+    }
+
+    private void trytoRemovePasswordfromMySQL() {
+        try{
+            if(!ContainsPassword(passwordfield.getText(), sitefield.getText(), usernamefield.getText())){
+                confirmRemoval();
+            }else{
+                JOptionPane.showMessageDialog(null,"No password for " + usernamefield.getText() +
+                        " on " + sitefield.getText() + " with password specified to remove", "No Password Found", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error removing password from MySQL", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    private void confirmRemoval() {
+        int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this password from the database FOREVER?", "Confirm Choice",
+                JOptionPane.YES_NO_OPTION);
+        if(choice == JOptionPane.YES_OPTION){
+            removePassword(sitefield.getText(), usernamefield.getText(), passwordfield.getText());
+        }else{
+            JOptionPane.showMessageDialog(null, "Data deletion cancelled", "Process Cancelled", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void removePassword(String site, String user, String password) {
+        try{
+            Connection c = getConnection();
+            Statement st = c.createStatement();
+            st.executeUpdate("DELETE FROM password WHERE username = '" + user + "' AND site_name = '" + site + "' AND password = '" + password + "';");
+            if(ContainsPassword(password, site, user)){
+                JOptionPane.showMessageDialog(null, "Yay, dead weight removed from database!", "Password Removed", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "Error removing password, it can still be found in the database...", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+
+        }
+
     }
 
     private void setupPasswordField() {
@@ -130,5 +221,41 @@ public class RemoveGUI extends JFrame {
             }
         });
         c.add(sitefield);
+    }
+    private static Connection getConnection(){
+        try{
+            String driver = "com.mysql.cj.jdbc.Driver";
+            String url = "jdbc:mysql://localhost:3305/passwords";
+            String username = "root";
+            String password = "Golazohiguain9";
+            Class.forName(driver);
+
+            Connection con = DriverManager.getConnection(url,username,password);
+            System.out.println("Connected");
+            return con;
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        return null;
+    }
+    private boolean ContainsPassword(String password, String site, String user){
+        boolean ret = true;
+        try{
+            Connection con = getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("SELECT password FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
+            rs.next();
+            if(password.equals(rs.getString("password"))){
+                ret = false;
+            }
+            rs.close();
+            st.close();
+            con.close();
+        }catch(Exception e){
+            e.printStackTrace();
+            ret = true;
+        }
+        return ret;
+
     }
 }

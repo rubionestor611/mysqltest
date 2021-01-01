@@ -16,6 +16,7 @@ public class SetGui extends JFrame{
     private JButton clear;
     private Container c;
     private JTextArea results;
+    private RandomPasswordGenPane generator;
 
     public SetGui(Dimension size){
         setTitle("Password Manager");
@@ -100,6 +101,15 @@ public class SetGui extends JFrame{
         });
         c.add(clear);
 
+        generator = new RandomPasswordGenPane((passwordfield.getX() + passwordfield.getWidth()) - (this.submit.getX()), this.getWidth() / 4);
+        generator.setLocation(this.submit.getX(), this.submit.getY() + this.submit.getHeight() + 5);
+        generator.getGenerate().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                passwordfield.setText(generator.generatePassword());
+            }
+        });
+        c.add(generator);
     }
 
     private String trytoSubmit(String site, String user, String pass) {
