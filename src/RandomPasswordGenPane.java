@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Random;
 
 public class RandomPasswordGenPane extends JPanel {
@@ -19,6 +21,8 @@ public class RandomPasswordGenPane extends JPanel {
     private Random rand = new Random();
     private Container optionscontainer;
     private GridBagConstraints optionsconstraints;
+    private boolean withNumbers = false;
+    private boolean withSymbols = false;
     public RandomPasswordGenPane(int width, int height){
         this.setLayout(new GridBagLayout());
         constraints = new GridBagConstraints();
@@ -53,9 +57,11 @@ public class RandomPasswordGenPane extends JPanel {
     private void setupLabel() {
         this.label = new JLabel("Optional Password Generator");
         label.setForeground(Color.BLACK);
+        this.label.setFont(new Font("Arial", Font.BOLD, 20));
 
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.ipady = 50;
         this.add(label, constraints);
     }
 
@@ -63,72 +69,67 @@ public class RandomPasswordGenPane extends JPanel {
         this.Generate = new JButton("Generate");
         constraints.gridx = 0;
         constraints.gridy = 4;
+        constraints.ipady = 20;
         this.add(Generate, constraints);
     }
 
     private void setupSymbol() {
-        Container c = new Container();
-        c.setLayout(new GridBagLayout());
-        GridBagConstraints localConstraints = new GridBagConstraints();
-
-        this.symbols = new JLabel("Symbols(!@#$%&?/*-+): ");
-        localConstraints.gridx = 0;
-        localConstraints.gridy = 0;
-        c.add(symbols, localConstraints);
+        this.symbols = new JLabel("Symbols(!@#$%&?/*-+): ", SwingConstants.LEFT);
+        this.optionsconstraints.gridx = 0;
+        this.optionsconstraints.gridy = 0;
+        this.optionscontainer.add(this.symbols, this.optionsconstraints);
 
         this.symbolsbox = new JCheckBox();
-        localConstraints.gridx = 1;
-        localConstraints.gridy = 0;
-        c.add(symbolsbox, localConstraints);
-
-        constraints.gridy = 1;
-        constraints.gridx = 0;
-        this.add(c,constraints);
+        this.optionsconstraints.gridx = 1;
+        this.optionsconstraints.gridy = 0;
+        this.symbolsbox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                withSymbols = !withSymbols;
+            }
+        });
+        this.optionscontainer.add(this.symbolsbox, this.optionsconstraints);
 
     }
     private void setupNums(){
-        Container c = new Container();
-        c.setLayout(new GridBagLayout());
-        GridBagConstraints localConstraints = new GridBagConstraints();
-
         this.nums = new JLabel("Numbers(0 - 9):               ");
-        localConstraints.gridx = 0;
-        localConstraints.gridy = 0;
-        c.add(nums, localConstraints);
+        this.nums.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+        this.nums.setSize(this.symbols.getSize());
+        this.optionsconstraints.gridx = 0;
+        this.optionsconstraints.gridy = 1;
+        this.optionscontainer.add(this.nums, this.optionsconstraints);
 
         this.numsbox = new JCheckBox();
-        localConstraints.gridy = 0;
-        localConstraints.gridx = 1;
-        c.add(numsbox, localConstraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        this.add(c,constraints);
+        this.optionsconstraints.gridx = 1;
+        this.optionsconstraints.gridy = 1;
+        this.numsbox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                withNumbers = !withNumbers;
+            }
+        });
+        this.optionscontainer.add(this.numsbox, this.optionsconstraints);
     }
     private void setupLength(){
-        Container c = new Container();
-        c.setLayout(new GridBagLayout());
-        GridBagConstraints localConstraints = new GridBagConstraints();
-
         this.length = new JLabel("Length:                            ");
-        localConstraints.gridx = 0;
-        localConstraints.gridy = 0;
-        c.add(length, localConstraints);
+        this.length.setAlignmentX(JLabel.LEFT_ALIGNMENT);
+        this.length.setSize(this.symbols.getSize());
+        this.length.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.optionsconstraints.gridx = 0;
+        this.optionsconstraints.gridy = 2;
+        this.optionscontainer.add(this.length, this.optionsconstraints);
 
-        this.lengthfield = new JTextField(1);
-        localConstraints.gridy = 0;
-        localConstraints.gridx = 1;
-        c.add(lengthfield, localConstraints);
+        this.lengthfield = new JTextField(3);
+        this.optionsconstraints.gridx = 1;
+        this.optionsconstraints.gridy = 2;
+        this.optionscontainer.add(this.lengthfield, this.optionsconstraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        this.add(c,constraints);
     }
     public JButton getGenerate(){
         return this.Generate;
     }
     public String generatePassword(){
-        return generatePassword2(Integer.parseInt(this.lengthfield.getText()),symbolsbox.isSelected(), numsbox.isSelected());
+        return generatePassword2(Integer.parseInt(this.lengthfield.getText()),withSymbols, withNumbers);
     }
     private String generatePassword2(int length, boolean symbols, boolean numbers){
         if(symbols && numbers){
@@ -163,16 +164,45 @@ public class RandomPasswordGenPane extends JPanel {
                 ret += lettersSet[rand2];
             }else{//num
                 rand2= rand.nextInt(this.numbersSet.length);
-                ret += lettersSet[rand2];
+                ret += numbersSet[rand2];
             }
         }
         return ret;
     }
 
     public String generateFullyRandomPassword(int length) {
-        return null;
+        int rand1;
+        int rand2;
+        String ret = "";
+        for(int i = 0; i < length; i++){
+            rand1 = rand.nextInt(3);
+            if(rand1 == 0){//letters
+                rand2 = rand.nextInt(this.lettersSet.length);
+                ret += lettersSet[rand2];
+            }else if (rand1 == 1){//num
+                rand2= rand.nextInt(this.numbersSet.length);
+                ret += numbersSet[rand2];
+            }else{
+                rand2= rand.nextInt(this.symbolsSet.length);
+                ret += symbolsSet[rand2];
+            }
+        }
+        return ret;
     }
     public String generateRandomPasswordSymbolsandChar(int length){
-        return null;
+        int rand1;
+        int rand2;
+        String ret = "";
+        for(int i = 0; i < length; i++){
+            rand1 = rand.nextInt();
+            if(rand1 % 2 == 0){//letters
+                rand2= rand.nextInt(this.lettersSet.length);
+                ret += lettersSet[rand2];
+            }else{//num
+                rand2= rand.nextInt(this.symbolsSet.length);
+                ret += symbolsSet[rand2];
+            }
+        }
+        return ret;
     }
 }
