@@ -129,7 +129,14 @@ public class RandomPasswordGenPane extends JPanel {
         return this.Generate;
     }
     public String generatePassword(){
-        return generatePassword2(Integer.parseInt(this.lengthfield.getText()),withSymbols, withNumbers);
+        try{
+            Integer.parseInt(lengthfield.getText());
+            return generatePassword2(Integer.parseInt(this.lengthfield.getText()),withSymbols, withNumbers);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Please input a valid integer for the length of the generated password.",
+                    "Error", JOptionPane.WARNING_MESSAGE);
+        }
+        return null;
     }
     private String generatePassword2(int length, boolean symbols, boolean numbers){
         if(symbols && numbers){

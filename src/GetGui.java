@@ -8,6 +8,7 @@ public class GetGui extends GUI{
     public GetGui(Dimension frameSize){
         this.frame = new JFrame();
         this.frame.setSize(frameSize);
+        this.frame.setBackground(Color.PINK);
         this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setupGUI(frame);
         frame.setVisible(true);
@@ -21,8 +22,10 @@ public class GetGui extends GUI{
                 new Font("TimesRoman", Font.BOLD, 25),
                 Color.WHITE, frame.getHeight() / 10, frame.getWidth());
         frame.add(BorderLayout.NORTH, title);
+
         JPanel pane = new JPanel();
         pane.setLayout(new GridBagLayout());
+        pane.setBackground(Color.PINK);
         GridBagConstraints constraints = new GridBagConstraints();
         JLabel site = new JLabel("Site Name:");
         constraints.gridx = 0;
@@ -49,6 +52,7 @@ public class GetGui extends GUI{
         constraints.gridx = 0;
         constraints.gridy = 4;
         constraints.gridwidth = 4;
+        constraints.ipady = 20;
         pane.add(passwordfield, constraints);
 
         JButton search = new JButton("Get Password");

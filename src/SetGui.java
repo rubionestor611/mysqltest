@@ -25,9 +25,11 @@ public class SetGui extends JFrame{
 
         c = this.getContentPane();
         c.setLayout(null);
+        c.setBackground(Color.BLACK);
 
         title = new JLabel("Add Password to MYSQL Database");
         title.setFont(new Font("Arial", Font.BOLD, 30));
+        title.setForeground(Color.ORANGE);
         title.setSize(700,30);
         title.setLocation((this.getWidth() / 2 ) - (title.getWidth() / 2), this.getHeight() / 10);
         c.add(title);
@@ -35,6 +37,7 @@ public class SetGui extends JFrame{
         site = new JLabel("Site:");
         site.setFont(new Font("Arial", Font.PLAIN, 20));
         site.setSize(100,20);
+        site.setForeground(Color.ORANGE);
         site.setLocation(title.getX(),this.getHeight() / 5);
         c.add(site);
 
@@ -47,6 +50,7 @@ public class SetGui extends JFrame{
         username = new JLabel("Username:");
         username.setFont(new Font("Arial", Font.PLAIN, 20));
         username.setSize(100,20);
+        username.setForeground(Color.ORANGE);
         username.setLocation(site.getX(), site.getY() + 60);
         c.add(username);
 
@@ -59,6 +63,7 @@ public class SetGui extends JFrame{
         password = new JLabel("Password:");
         password.setFont(new Font("Arial", Font.PLAIN, 20));
         password.setSize(100,20);
+        password.setForeground(Color.ORANGE);
         password.setLocation(username.getX(), username.getY() + 60);
         c.add(password);
 

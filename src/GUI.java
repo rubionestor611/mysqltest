@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public abstract class GUI{
     protected JFrame frame = new JFrame();
-    protected Dimension WindowSize  = new Dimension(1000, 1000);
+    protected Dimension WindowSize  = Toolkit.getDefaultToolkit().getScreenSize();
     protected String guiname = "Password Manager";
     protected abstract void setupGUI(JFrame frame);
     protected JLabel createJLabel(String txt,int placement, Font font, Color color, int height, int width){

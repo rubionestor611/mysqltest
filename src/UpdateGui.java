@@ -25,11 +25,13 @@ public class UpdateGui extends JFrame{
         this.constraints = new GridBagConstraints();
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setTitle("Password Manager");
-        this.formatGui();
+        Color theme = new Color(102,255,102);
+        this.getContentPane().setBackground(theme);
+        this.formatGui(theme);
         this.setVisible(true);
     }
 
-    private void formatGui() {
+    private void formatGui(Color theme) {
         JPanel pane = new JPanel();
         pane.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -75,6 +77,7 @@ public class UpdateGui extends JFrame{
 
         this.constraints.gridx = 0;
         this.constraints.gridy = 0;
+        pane.setBackground(theme);
         this.add(pane, this.constraints);
 
         JPanel buttonPane = new JPanel();
@@ -115,8 +118,10 @@ public class UpdateGui extends JFrame{
             }
         });
         buttonPane.add(cancel, constraints);
+        buttonPane.setBackground(theme);
 
         this.constraints.gridy = 1;
+        this.constraints.ipady = 20;
         this.add(buttonPane, this.constraints);
 
     }

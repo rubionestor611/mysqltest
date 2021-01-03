@@ -9,9 +9,10 @@ public class MainGui extends GUI{
     public MainGui(){
         this.frame = new JFrame(this.guiname);
         frame.setTitle("Password Manager");
-        this.frame.setSize(this.WindowSize);
+        this.frame.setSize(1000, this.WindowSize.height);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setupGUI2(this.frame);
+        this.frame.setResizable(false);
         this.frame.setVisible(true);
     }
     protected void setupGUI(JFrame frame){
@@ -89,10 +90,10 @@ public class MainGui extends GUI{
         JLabel title = new JLabel("Welcome to Nestor's Password Manager!");
         title.setFont(new Font("Arial", Font.BOLD, 30));
         title.setSize(700,40);
-        title.setLocation((frame.getWidth() / 2 ) - (title.getWidth() / 2), frame.getHeight() / 10);
+        title.setLocation((frame.getWidth() / 5 ) , frame.getHeight() / 10);
         c.add(title);
 
-        get_password.setLocation(title.getX() + title.getWidth() / 16, title.getY() + 70);
+        get_password.setLocation(frame.getWidth() / 4, title.getY() + 70);
         c.add(get_password);
 
         add_password.setLocation(get_password.getX(), get_password.getY() + 70);

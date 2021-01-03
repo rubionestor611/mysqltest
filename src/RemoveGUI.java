@@ -28,16 +28,19 @@ public class RemoveGUI extends JFrame {
 
         c = this.getContentPane();
         c.setLayout(null);
+        c.setBackground(SystemColor.YELLOW);
 
-        title = new JLabel("Remove Password from Local MySQL Databse");
+        title = new JLabel("Remove Password from Local MySQL Database");
         title.setFont(new Font("Arial", Font.BOLD, 30));
         title.setSize(700,30);
+        title.setForeground(Color.BLACK);
         title.setLocation((this.getWidth() / 2 ) - (title.getWidth() / 2), this.getHeight() / 10);
         c.add(title);
 
         warning = new JTextPane();
         warning.setFont(new Font("Arial", Font.BOLD, 15));
         warning.setSize(700,50);
+        warning.setBackground(Color.BLACK);
         StyledDocument doc = warning.getStyledDocument();
         SimpleAttributeSet center = new SimpleAttributeSet();
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
