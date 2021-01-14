@@ -18,7 +18,7 @@ public class UpdateGui extends JFrame{
     private int confirmchange;
     private GridBagConstraints constraints;
 
-    public UpdateGui(Dimension size){
+    public UpdateGui(Dimension size, String port, String password){
         this.setSize(size);
         this.getContentPane().setLayout(new GridBagLayout());
         this.getContentPane().setSize((int)Math.round(this.getWidth() * 0.9), (int) Math.round(this.getHeight() * 0.9));
@@ -27,11 +27,11 @@ public class UpdateGui extends JFrame{
         this.setTitle("Password Manager");
         Color theme = new Color(102,255,102);
         this.getContentPane().setBackground(theme);
-        this.formatGui(theme);
+        this.formatGui(theme, port, password);
         this.setVisible(true);
     }
 
-    private void formatGui(Color theme) {
+    private void formatGui(Color theme,String port, String pass) {
         JPanel pane = new JPanel();
         pane.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();

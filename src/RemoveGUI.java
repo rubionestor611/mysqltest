@@ -12,7 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class RemoveGUI extends JFrame {
+public class RemoveGUI extends JFrame implements SQLConnection{
     private Container c;
     private JLabel title;
     private JTextPane warning;
@@ -23,7 +23,7 @@ public class RemoveGUI extends JFrame {
     private JButton clear;
     private JButton cancel;
 
-    public RemoveGUI(Dimension size){
+    public RemoveGUI(Dimension size, String port, String password){
         this.setSize(size);
 
         c = this.getContentPane();
@@ -57,19 +57,19 @@ public class RemoveGUI extends JFrame {
 
         setupPasswordField();
 
-        setupButtons();
+        setupButtons(port, password);
 
         this.setVisible(true);
     }
 
-    private void setupButtons() {
+    private void setupButtons(String port, String sqlpass) {
         remove = new JButton("Remove");
         remove.setLocation(sitefield.getX() + sitefield.getWidth() + 30, sitefield.getY());
         remove.setSize(sitefield.getWidth() / 4, sitefield.getHeight());
         remove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                trytoRemovePasswordfromMySQL();
+                trytoRemovePasswordfromMySQL(port,sqlpass);
             }
         });
         c.add(remove);
@@ -102,10 +102,10 @@ public class RemoveGUI extends JFrame {
         c.add(cancel);
     }
 
-    private void trytoRemovePasswordfromMySQL() {
+    private void trytoRemovePasswordfromMySQL(String port, String pass) {
         try{
-            if(!ContainsPassword(passwordfield.getText(), sitefield.getText(), usernamefield.getText())){
-                confirmRemoval();
+            if(!ContainsPassword(passwordfield.getText(), sitefield.getText(), usernamefield.getText(), port, pass)){
+                confirmRemoval(port,pass);
             }else{
                 JOptionPane.showMessageDialog(null,"No password for " + usernamefield.getText() +
                         " on " + sitefield.getText() + " with password specified to remove", "No Password Found", JOptionPane.INFORMATION_MESSAGE);
@@ -117,22 +117,22 @@ public class RemoveGUI extends JFrame {
 
     }
 
-    private void confirmRemoval() {
+    private void confirmRemoval(String port, String sqlpass) {
         int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove this password from the database FOREVER?", "Confirm Choice",
                 JOptionPane.YES_NO_OPTION);
         if(choice == JOptionPane.YES_OPTION){
-            removePassword(sitefield.getText(), usernamefield.getText(), passwordfield.getText());
+            removePassword(sitefield.getText(), usernamefield.getText(), passwordfield.getText(), port, sqlpass);
         }else{
             JOptionPane.showMessageDialog(null, "Data deletion cancelled", "Process Cancelled", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    private void removePassword(String site, String user, String password) {
+    private void removePassword(String site, String user, String password, String port, String sqlpass) {
         try{
-            Connection c = getConnection();
+            Connection c = getConnection(port,sqlpass);
             Statement st = c.createStatement();
             st.executeUpdate("DELETE FROM password WHERE username = '" + user + "' AND site_name = '" + site + "' AND password = '" + password + "';");
-            if(ContainsPassword(password, site, user)){
+            if(ContainsPassword(password, site, user, port, sqlpass)){
                 JOptionPane.showMessageDialog(null, "Yay, dead weight removed from database!", "Password Removed", JOptionPane.INFORMATION_MESSAGE);
             }else{
                 JOptionPane.showMessageDialog(null, "Error removing password, it can still be found in the database...", "Error", JOptionPane.ERROR_MESSAGE);
@@ -225,26 +225,10 @@ public class RemoveGUI extends JFrame {
         });
         c.add(sitefield);
     }
-    private static Connection getConnection(){
-        try{
-            String driver = "com.mysql.cj.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:3305/passwords";
-            String username = "root";
-            String password = "Golazohiguain9";
-            Class.forName(driver);
-
-            Connection con = DriverManager.getConnection(url,username,password);
-            System.out.println("Connected");
-            return con;
-        }catch(Exception e){
-            System.out.println(e);
-        }
-        return null;
-    }
-    private boolean ContainsPassword(String password, String site, String user){
+    private boolean ContainsPassword(String password, String site, String user, String port, String sqlpass){
         boolean ret = true;
         try{
-            Connection con = getConnection();
+            Connection con = getConnection(port, sqlpass);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT password FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
             rs.next();

@@ -6,53 +6,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainGui extends GUI{
-    public MainGui(){
+    public MainGui(String port, String password){
         this.frame = new JFrame(this.guiname);
         frame.setTitle("Password Manager");
         this.frame.setSize(1000, this.WindowSize.height);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setupGUI2(this.frame);
+        this.setupGUI2(this.frame, port, password);
         this.frame.setResizable(false);
         this.frame.setVisible(true);
     }
-    protected void setupGUI(JFrame frame){
-        frame.getContentPane().setBackground(Color.blue);
-        JLabel label = createJLabel("Welcome to Nestor's Password Manager!",
-                SwingConstants.CENTER, new Font("TimesRoman", Font.BOLD, 25), Color.WHITE,
-                frame.getHeight() / 10, frame.getWidth());
-        frame.add(BorderLayout.NORTH, label);
-        String name = "ADD PASSWORD";
-        ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SetGui setGUI = new SetGui(frame.getSize());
-                setGUI.setVisible(true);
-            }
-        };
-
-        Dimension dim = new Dimension(100,100);
-        JButton addpassword = createJButton(name,listener,dim);
-        frame.add(addpassword);
-        name = "GET PASSWORD";
-        listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GetGui getgui = new GetGui(frame.getSize());
-            }
-        };
-        frame.add(createJLabel("", SwingConstants.CENTER, null,Color.BLACK,frame.getHeight() / 10, frame.getWidth()));
-        JButton getpassword = createJButton(name, listener, dim);
-        frame.add(getpassword);
-
-        frame.setLayout(new GridLayout(5,7));
-    }
-    private void setupGUI2(JFrame frame){
+    private void setupGUI2(JFrame frame, String port, String password){
         JButton get_password = new JButton("Get Password");
         get_password.setSize((int)Math.round(frame.getWidth() * 0.5),50);
         get_password.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GetGui getGui = new GetGui(frame.getSize());
+                GetGui getGui = new GetGui(frame.getSize(), port, password);
             }
         });
 
@@ -61,7 +30,7 @@ public class MainGui extends GUI{
         add_password.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SetGui setGui = new SetGui(frame.getSize());
+                SetGui setGui = new SetGui(frame.getSize(), port, password);
                 setGui.setVisible(true);
             }
         });
@@ -70,7 +39,7 @@ public class MainGui extends GUI{
         update_password.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UpdateGui updateGui = new UpdateGui(frame.getSize());
+                UpdateGui updateGui = new UpdateGui(frame.getSize(), port, password);
             }
         });
 
@@ -79,7 +48,7 @@ public class MainGui extends GUI{
         remove_password.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                RemoveGUI removeGUI = new RemoveGUI(frame.getSize());
+                RemoveGUI removeGUI = new RemoveGUI(frame.getSize(), port, password);
             }
         });
 
@@ -105,5 +74,10 @@ public class MainGui extends GUI{
         remove_password.setLocation(update_password.getX(), update_password.getY() + 70);
         c.add(remove_password);
 
+    }
+
+    @Override
+    protected void setupGUI(JFrame frame) {
+        return;
     }
 }

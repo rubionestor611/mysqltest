@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        MainGui main = new MainGui();
+        LoginGui login = new LoginGui();
     }
 }
     /*Connection c = getConnection();

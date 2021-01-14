@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class SetGui extends JFrame{
+public class SetGui extends JFrame implements SQLConnection{
     private JLabel title;
     private JLabel site;
     private JTextField sitefield;
@@ -18,7 +18,7 @@ public class SetGui extends JFrame{
     private JTextArea results;
     private RandomPasswordGenPane generator;
 
-    public SetGui(Dimension size){
+    public SetGui(Dimension size, String port, String sqlpassword){
         setTitle("Password Manager");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(size);
@@ -89,7 +89,7 @@ public class SetGui extends JFrame{
         submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                results.setText(trytoSubmit(sitefield.getText(), usernamefield.getText(), passwordfield.getText()));
+                results.setText(trytoSubmit(sitefield.getText(), usernamefield.getText(), passwordfield.getText(), port, sqlpassword));
             }
         });
         c.add(submit);
@@ -117,10 +117,10 @@ public class SetGui extends JFrame{
         c.add(generator);
     }
 
-    private String trytoSubmit(String site, String user, String pass) {
+    private String trytoSubmit(String site, String user, String pass, String port, String sqlpass) {
         String ret = "";
         try{
-            Connection con = getConnection();
+            Connection con = getConnection(port, sqlpass);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT COUNT(*) AS count FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
             rs.next();
