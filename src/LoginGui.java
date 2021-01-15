@@ -4,10 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
-public class LoginGui extends JFrame {
+public class LoginGui extends JFrame implements SQLConnection{
     private JLabel password;
     private JTextField passwordfield;
     private JLabel port;
@@ -133,20 +131,5 @@ public class LoginGui extends JFrame {
             "Login Fail", JOptionPane.OK_OPTION);
         }
         return false;
-    }
-
-    private Connection getConnection(String port, String pass) throws SQLException, ClassNotFoundException {
-        try{
-            String driver = "com.mysql.cj.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:" + port+ "/passwords";
-            String username = "root";
-            Class.forName(driver);
-
-            Connection con = DriverManager.getConnection(url,username,pass);
-            System.out.println("Connected");
-            return con;
-        }catch(Exception e){
-            throw e;
-        }
     }
 }

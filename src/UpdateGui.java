@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class UpdateGui extends JFrame{
+public class UpdateGui extends JFrame implements SQLConnection{
     private JLabel title;
     private JLabel site;
     private JTextField sitefield;
@@ -90,7 +90,7 @@ public class UpdateGui extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(!sitefield.getText().strip().equals("") && !usernamefield.getText().strip().equals("") && !passwordfield.getText().strip().equals("")){
-                    tryUpdate(sitefield.getText(), usernamefield.getText(), passwordfield.getText());
+                    tryUpdate(sitefield.getText(), usernamefield.getText(), passwordfield.getText(), port, pass);
                 }else{
                     JOptionPane.showMessageDialog(null, "Empty values cannot be used in update", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -132,8 +132,8 @@ public class UpdateGui extends JFrame{
         this.passwordfield.setText("");
     }
 
-    private void tryUpdate(String site, String user, String password) {
-        Connection con = getConnection();
+    private void tryUpdate(String site, String user, String password, String port, String sqlpass) {
+        Connection con = getConnection(port, sqlpass);
         try{
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT COUNT(*) AS count FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
@@ -141,7 +141,7 @@ public class UpdateGui extends JFrame{
             if(rs.getInt("count") == 1){
                 confirmchange = JOptionPane.showConfirmDialog(null, "Are you sure you want to update the " +
                         "password on " + site + " for " + user + "?", "Confirm Change", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(confirmchange == 0 && ContainsPassword(password, site, user)){//if yes and no matches
+                if(confirmchange == 0 && ContainsPassword(password, site, user, port, sqlpass)){//if yes and no matches
                     String query = "UPDATE password SET password = ? WHERE site_name = ? AND username = ?;";
                     PreparedStatement preparedstmt = con.prepareStatement(query);
 
@@ -151,7 +151,7 @@ public class UpdateGui extends JFrame{
 
                     preparedstmt.execute();
                     JOptionPane.showMessageDialog(null, "Password Updated", "Password Updated", JOptionPane.INFORMATION_MESSAGE);
-                }else if(confirmchange == 0 && !ContainsPassword(password, site, user)){
+                }else if(confirmchange == 0 && !ContainsPassword(password, site, user, port, sqlpass)){
                     JOptionPane.showMessageDialog(null, "New password can't match current one", "No Update to Passwords", JOptionPane.WARNING_MESSAGE);
                 }else{//its no
                     JOptionPane.showMessageDialog(null, "Update of password cancelled", "No Update to Passwords", JOptionPane.INFORMATION_MESSAGE);
@@ -166,27 +166,10 @@ public class UpdateGui extends JFrame{
             JOptionPane.showMessageDialog(null, "Error attempting update on MySQL Server", "Error", JOptionPane.OK_OPTION);
         }
     }
-
-    private Connection getConnection(){
-        try{
-            String driver = "com.mysql.cj.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:3305/passwords";
-            String username = "root";
-            String password = "Golazohiguain9";
-            Class.forName(driver);
-
-            Connection con = DriverManager.getConnection(url,username,password);
-            System.out.println("Connected");
-            return con;
-        }catch(Exception e){
-            System.out.println(e);
-        }
-        return null;
-    }
-    private boolean ContainsPassword(String password, String site, String user){
+    private boolean ContainsPassword(String password, String site, String user, String port, String sqlpassword){
         boolean ret = true;
         try{
-            Connection con = getConnection();
+            Connection con = getConnection(port, password);
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("SELECT password FROM password WHERE site_name = '" + site + "' AND username = '" + user + "';");
             rs.next();

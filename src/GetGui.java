@@ -182,21 +182,4 @@ public class GetGui extends GUI implements SQLConnection{
     protected void setupGUI(JFrame frame) {
         return;
     }
-
-   /* private static Connection getConnection(){
-        try{
-            String driver = "com.mysql.cj.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:3305/passwords";
-            String username = "root";
-            String password = "Golazohiguain9";
-            Class.forName(driver);
-
-            Connection con = DriverManager.getConnection(url,username,password);
-            System.out.println("Connected");
-            return con;
-        }catch(Exception e){
-            System.out.println(e);
-        }
-        return null;
-    }*/
 }

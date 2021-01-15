@@ -23,6 +23,7 @@ public class RandomPasswordGenPane extends JPanel {
     private GridBagConstraints optionsconstraints;
     private boolean withNumbers = false;
     private boolean withSymbols = false;
+    
     public RandomPasswordGenPane(int width, int height){
         this.setLayout(new GridBagLayout());
         constraints = new GridBagConstraints();
